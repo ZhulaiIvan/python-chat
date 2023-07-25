@@ -6,6 +6,7 @@ PORT = 9999
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.bind((HOST, PORT))
+print(f"Host {HOST}")
 
 server.listen()
 
@@ -23,7 +24,9 @@ def handle_connection(client):
             message = client.recv(1024)
             broadcast(message)
         except:
-            nickname = list(clients.keys())[list(client.values()).index(client)]
+            nicknames = list(clients.keys())
+            sockets = list(clients.values())
+            nickname = nicknames[sockets.index(client)]
             clients.pop(nickname)
             broadcast(f'Client {nickname} left the chat'.encode('utf-8'))
             stop = True
