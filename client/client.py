@@ -2,6 +2,7 @@ import kivy
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
 from threading import Thread
+from kivy.core.window import Window
 
 import socket
 
@@ -12,9 +13,16 @@ client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 class MyRoot(BoxLayout):
     def __init__(self):
         super(MyRoot, self).__init__()
+        Window.bind(on_request_close=self.on_request_close)
+
+    def on_request_close(self, *args):
+        chat.stop()
+        client.close()
+        Window.close()
 
     def send_message(self):
         client.send(f"{self.nickname_text.text}: {self.message_text.text}".encode("utf-8"))
+        self.message_text.text = ""
 
     def connect_to_server(self):
         if self.nickname_text != '':
